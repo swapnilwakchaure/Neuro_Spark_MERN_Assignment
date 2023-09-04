@@ -11,14 +11,14 @@ const CreateEvent = () => {
 
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
-  const [number, setNumber] = useState('');
+  const [contact, setContact] = useState('');
   const [date, setDate] = useState('');
 
   // check input values are valid or invalid;
 
   const nameStrength = nameValidation(name);
   const emailStrength = emailValidation(email);
-  const noStrength = numberValidation(number);
+  const noStrength = numberValidation(contact);
 
   // get the values and submit the form and post the data;
 
@@ -26,12 +26,12 @@ const CreateEvent = () => {
     e.preventDefault();
 
     if (nameStrength === 'valid' && emailStrength === 'valid' && noStrength === 'valid' && date) {
-      const payload = { name, email, number: Number(number), date };
+      const payload = { name, email, contact: Number(contact), date };
       console.log('payload: ', payload);
 
       setName('');
       setEmail('');
-      setNumber('');
+      setContact('');
       setDate('');
     } else {
       alert('please enter valid details');
@@ -135,11 +135,11 @@ const CreateEvent = () => {
               required="required"
               minLength="10"
               maxLength="10"
-              value={number}
-              onChange={(e) => setNumber(e.target.value)}
+              value={contact}
+              onChange={(e) => setContact(e.target.value)}
             />
             <span className="placeholder">Contact</span>
-            <Message>{noStrength !== 'valid' && number.length > 1 && noStrength}</Message>
+            <Message>{noStrength !== 'valid' && contact.length > 1 && noStrength}</Message>
           </div>
 
           <Button width="90%" backcolor="#80D8FF">Add To List</Button>
