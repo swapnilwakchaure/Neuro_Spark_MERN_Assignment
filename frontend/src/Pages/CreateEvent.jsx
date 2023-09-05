@@ -1,12 +1,48 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
 import "../Styles/styles.css";
 import styled from "styled-components";
 import { CgClose } from "react-icons/cg";
+import UserCard from "../Components/UserCard";
+import { addToList, getList } from "../Redux/AddList/action";
 import { emailValidation, nameValidation, numberValidation } from "../Components/validation";
 
 
 const CreateEvent = () => {
 
+  // create event form starts from here;
+  // required hooks are created
+
+  const [title, setTitle] = useState('');
+  const [selectedUsers, setSelectedUsers] = useState([]);
+
+  const handleCheckboxChange = (event, user) => {
+    const isChecked = event.target.checked;
+
+    if (isChecked) {
+      setSelectedUsers([...selectedUsers, user]);
+    } else {
+      const updatedUsers = selectedUsers.filter((selectedUser) => selectedUser._id !== user._id);
+      setSelectedUsers(updatedUsers);
+    }
+  };
+
+  // submit the create event form;
+
+  const handleEventForm = (e) => {
+    e.preventDefault();
+
+    if (title && selectedUsers.length > 0) {
+      const payload = { title, selectedUsers };
+      console.log('payload: ', payload);
+    } else {
+      alert('Enter required details or select the participants from the list or add');
+    }
+  }
+
+
+
+  // add to list modal form starts from here;
   // add to list form handling values are here using hooks;
 
   const [name, setName] = useState('');
@@ -14,25 +50,41 @@ const CreateEvent = () => {
   const [contact, setContact] = useState('');
   const [date, setDate] = useState('');
 
+  // get the lists of participants by using react-redux store;
+
+  const { list, isLoading, isError } = useSelector((store) => store.ListReducer);
+  const dispatch = useDispatch();
+
+  // using useEffect hook dispatch getList function and get data;
+
+  useEffect(() => {
+    dispatch(getList());
+  }, []);
+
   // check input values are valid or invalid;
 
   const nameStrength = nameValidation(name);
   const emailStrength = emailValidation(email);
   const noStrength = numberValidation(contact);
 
-  // get the values and submit the form and post the data;
+  // get the values and submit add to list form and post the data;
 
   const handleAddToList = (e) => {
     e.preventDefault();
 
     if (nameStrength === 'valid' && emailStrength === 'valid' && noStrength === 'valid' && date) {
       const payload = { name, email, contact: Number(contact), date };
-      console.log('payload: ', payload);
+      // console.log('payload: ', payload);
+      dispatch(addToList(payload))
+        .then((
+          dispatch(getList())
+        ))
 
       setName('');
       setEmail('');
       setContact('');
       setDate('');
+      window.location.reload();
     } else {
       alert('please enter valid details');
     }
@@ -42,7 +94,7 @@ const CreateEvent = () => {
 
   const [modal, setModal] = useState(false);
 
-  // open modal form and close modal form 
+  // open modal form and close modal form
   const toggleModal = () => {
     setModal(!modal);
   }
@@ -55,29 +107,53 @@ const CreateEvent = () => {
     document.body.classList.remove('active-modal');
   }
 
+
+
   return (
     <Main>
-      <div>
-        <Title>Title of the Event</Title>
+      <EventForm onSubmit={handleEventForm}>
 
-        <div></div>
+        <Title
+          type="text"
+          autoFocus
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+          placeholder="Title of the Event"
+          required
+          minLength="3"
+        />
+
+        <div>
+          {isError ? <h2>something went wrong</h2> : <div></div>}
+          {isLoading ? <h2>Loading...</h2> : <div></div>}
+          {list?.length > 0 && list.map((user) => {
+            return <Details key={user._id}>
+              <UserCard
+                data={user}
+              />
+              <CheckBox
+                type="checkbox"
+                onChange={(event) => handleCheckboxChange(event, user)}
+                checked={selectedUsers.some((selectedUsers) => selectedUsers._id === user._id)}
+              />
+            </Details>
+          })
+          }
+        </div>
 
         <ButtonBox>
-          <Button
-            width="100%"
-            backcolor="#80D8FF"
+          <Add
             onClick={toggleModal}
           >
             Add
-          </Button>
-          <Button
-            width="100%"
-            backcolor="#A7FFEB"
-          >
-            Save
-          </Button>
+          </Add>
+          <Submit
+            type="submit"
+            value="Save"
+          />
         </ButtonBox>
-      </div>
+
+      </EventForm>
 
       {modal && <div className="modal">
         <div onClick={toggleModal} className="overlay"></div>
@@ -142,7 +218,7 @@ const CreateEvent = () => {
             <Message>{noStrength !== 'valid' && contact.length > 1 && noStrength}</Message>
           </div>
 
-          <Button width="90%" backcolor="#80D8FF">Add To List</Button>
+          <Button>Add To List</Button>
         </Form>
       </div>
       }
@@ -164,8 +240,12 @@ const Main = styled.div`
   margin: 30px auto;
 `
 
-const Title = styled.p`
+const EventForm = styled.form``
+
+
+const Title = styled.input`
   width: 100%;
+  text-align: center;
   padding: 5px 0px;
   border: 2px solid;
   border-radius: 20px;
@@ -173,11 +253,19 @@ const Title = styled.p`
   font-weight: 500;
   color: #0091EA;
   letter-spacing: 1.5px;
+`
 
-  &: hover {
-    background: #A7FFEB;
-    transition: 0.3s;
-  }
+
+const Details = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 5px;
+`
+
+
+const CheckBox = styled.input`
+  cursor: pointer;
 `
 
 
@@ -186,10 +274,12 @@ const ButtonBox = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+  gap: 5px;
 `
 
-const Button = styled.button`
-  width: ${(props) => props.width};
+
+const Button = styled.p`
+  width: 90%;
   margin: 5px;
   padding: 5px;
   font-size: 16px;
@@ -200,8 +290,44 @@ const Button = styled.button`
   cursor: pointer;
   
   &: hover {
-    background: ${(props) => props.backcolor};
+    background: #80D8FF;
     color: #fff;
+    transition: 0.3s;
+  }
+`
+
+const Add = styled.p`
+  border: 1px solid;
+  width: 100%;
+  padding: 5px;
+  border-radius: 10px;
+  background: #80D8FF;
+  color: white;
+  font-size: 16px;
+  font-weigth: 600;
+
+  &: hover {
+    border-radius: 20px;
+    cursor: pointer;
+    background: #00B0FF;
+    transition: 0.3s;
+  }
+`
+
+const Submit = styled.input`
+  border: 1px solid;
+  width: 100%;
+  padding: 8px;
+  background: #B2DFDB;
+  border-radius: 10px;
+  color: white;
+  font-size: 16px;
+  font-weigth: 600;
+
+  &: hover {
+    border-radius: 20px;
+    cursor: pointer;
+    background: #00897B;
     transition: 0.3s;
   }
 `
