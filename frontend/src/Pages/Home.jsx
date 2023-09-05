@@ -32,6 +32,8 @@ const Home = () => {
   const handleDeleteEvent = (id) => {
     dispatch(deleteEvent(id))
       .then(dispatch(getEvent()))
+    
+    window.location.reload();
   }
 
 
