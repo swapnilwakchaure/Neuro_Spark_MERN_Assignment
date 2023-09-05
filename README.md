@@ -6,7 +6,8 @@
 
 
 ## The deploy link is here
-``
+* FrontEnd `https://neuro-spark-create-event-mern-app.vercel.app/`
+* BackEnd `https://create-event-mern-stack-app.vercel.app`
 
 
 
