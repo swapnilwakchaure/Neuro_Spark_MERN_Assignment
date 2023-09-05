@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 
-
+// PARTICIPANTS SCHEMA TO ADD INTO EVENT LIST
 const participantSchema = new mongoose.Schema({
     name: String,
     date: Date,
@@ -12,7 +12,7 @@ const participantSchema = new mongoose.Schema({
 });
 
 
-
+// EVENT SCHEMA
 const eventSchema = new mongoose.Schema({
     title: String,
     selectedUsers: [participantSchema]
@@ -21,7 +21,7 @@ const eventSchema = new mongoose.Schema({
 });
 
 
-
+// EVENT MODEL
 const EventModel = mongoose.model('event', eventSchema);
 
 

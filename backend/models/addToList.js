@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 
-
+// ADD TO LIST PARTICIPANTS SCHEMA
 const addToListSchema = mongoose.Schema({
     name: String,
     date: Date,
@@ -12,7 +12,7 @@ const addToListSchema = mongoose.Schema({
 });
 
 
-
+// LIST MODEL
 const AddToListModel = mongoose.model('addtolist', addToListSchema);
 
 

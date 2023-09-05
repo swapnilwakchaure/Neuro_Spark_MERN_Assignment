@@ -7,7 +7,7 @@ const { EventModel } = require('../models/eventList');
 const addToListRoute = express.Router();
 
 
-
+// --------------- GET REQUEST ADD TO LIST PARTICIPANTS DATA --------------- //
 addToListRoute.get('/', async (request, response) => {
     const query = request.query;
 
@@ -20,7 +20,7 @@ addToListRoute.get('/', async (request, response) => {
 });
 
 
-
+// --------------- POST REQUEST ADD TO LIST PARTICIPANTS DATA --------------- //
 addToListRoute.post('/addtolist', async (request, response) => {
     const { name, date, email, contact } = request.body;
 
@@ -42,7 +42,7 @@ addToListRoute.post('/addtolist', async (request, response) => {
 });
 
 
-
+// --------------- POST REQUEST TO ADD EVENT DATA --------------- //
 addToListRoute.post('/addevent', async (request, response) => {
     const { title, selectedUsers } = request.body;
 
@@ -64,6 +64,7 @@ addToListRoute.post('/addevent', async (request, response) => {
 });
 
 
+// --------------- GET REQUEST FOR EVENTS DATA --------------- //
 addToListRoute.get('/getevent', async (request, response) => {
     const query = request.query;
 
@@ -76,6 +77,7 @@ addToListRoute.get('/getevent', async (request, response) => {
 });
 
 
+// --------------- DELETE REQUEST FOR DELETE EVENT DATA --------------- //
 addToListRoute.delete("/delete/:id", async (request, response) => {
     const ID = request.params.id;
 

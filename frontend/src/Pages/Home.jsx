@@ -6,23 +6,29 @@ import { deleteEvent, getEvent } from "../Redux/AddList/action";
 
 const Home = () => {
 
+  // to navigate another page
   const navigate = useNavigate();
 
+  // get the data from redux store by using react-redux hooks
   const { eventlist, isLoading, isError } = useSelector((store) => store.ListReducer);
   const dispatch = useDispatch();
 
+  // handles API calls or function
   useEffect(() => {
     dispatch(getEvent());
-  }, [])
+  }, []);
 
+  // hooks to show or hide the event details
   const [showEventDetails, setShowEventDetails] = useState(new Array(eventlist.length).fill(false));
 
+  // to show or hide the event details function
   const handleEventDetails = (index) => {
     const newShowEventDetails = [...showEventDetails];
     newShowEventDetails[index] = !newShowEventDetails[index];
     setShowEventDetails(newShowEventDetails);
   };
 
+  // to delete the particular event by providing an id to function
   const handleDeleteEvent = (id) => {
     dispatch(deleteEvent(id))
       .then(dispatch(getEvent()))
