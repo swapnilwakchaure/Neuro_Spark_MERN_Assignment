@@ -65,10 +65,25 @@ addToListRoute.post('/addevent', async (request, response) => {
 
 
 addToListRoute.get('/getevent', async (request, response) => {
+    const query = request.query;
+
     try {
-        console.log('title: ');
+        const eventData = await EventModel.find(query);
+        response.send(eventData);
     } catch (error) {
-        response.send(`Cannot able to add the event data ${error}`);
+        response.send(`Cannot able to get the participants ${error}`);
+    }
+});
+
+
+addToListRoute.delete("/delete/:id", async (request, response) => {
+    const ID = request.params.id;
+
+    try {
+        await EventModel.findByIdAndDelete({ _id: ID });
+        response.send({ "message": `Event is successfully deleted.` });
+    } catch (error) {
+        response.send('Cannot able to delete the event');
     }
 });
 
