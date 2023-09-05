@@ -1,5 +1,6 @@
 const express = require('express');
 const { AddToListModel } = require('../models/addToList');
+const { EventModel } = require('../models/eventList');
 
 
 
@@ -40,6 +41,36 @@ addToListRoute.post('/addtolist', async (request, response) => {
     }
 });
 
+
+
+addToListRoute.post('/addevent', async (request, response) => {
+    const { title, selectedUsers } = request.body;
+
+    try {
+        const oldEvent = await EventModel.find({ title });
+        if (oldEvent.length > 0) {
+            response.send(`${title}, event is already created. please create another`);
+        } else {
+            const newEvent = new EventModel({ title, selectedUsers });
+            await newEvent.save();
+            response.send({
+                'message': `${title}, event is created successfully`,
+                'data': newEvent
+            })
+        }
+    } catch (error) {
+        response.send(`Cannot able to add the event data ${error}`);
+    }
+});
+
+
+addToListRoute.get('/getevent', async (request, response) => {
+    try {
+        console.log('title: ');
+    } catch (error) {
+        response.send(`Cannot able to add the event data ${error}`);
+    }
+});
 
 
 module.exports = { addToListRoute };

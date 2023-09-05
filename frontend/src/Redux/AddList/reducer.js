@@ -1,6 +1,7 @@
 import * as types from "./actionTypes";
 
 const initState = {
+    eventlist: [],
     list: [],
     isLoading: false,
     isError: false
@@ -47,6 +48,47 @@ const reducer = (state = initState, { type, payload }) => {
                 isError: false
             }
         case types.POST_TO_LIST_FAILURE:
+            return {
+                ...state,
+                isLoading: false,
+                isError: true
+            }
+
+        // post events with title and participants cases
+        case types.POST_EVENT_REQUEST:
+            return {
+                ...state,
+                isLoading: true,
+                isError: false
+            }
+        case types.POST_EVENT_SUCCESS:
+            return {
+                ...state,
+                isLoading: false,
+                eventlist: [...state.eventlist, payload],
+                isError: false
+            }
+        case types.POST_EVENT_FAILURE:
+            return {
+                ...state,
+                isLoading: false,
+                isError: true
+            }
+
+        // get the all event with title and number of participants
+        case types.GET_EVENT_REQUEST:
+            return {
+                ...state,
+                isLoading: true,
+                isError: false
+            }
+        case types.GET_EVENT_SUCCESS:
+            return {
+                ...state,
+                isLoading: false,
+                eventlist: payload
+            }
+        case types.GET_EVENT_FAILURE:
             return {
                 ...state,
                 isLoading: false,

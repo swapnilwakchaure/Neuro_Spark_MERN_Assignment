@@ -38,6 +38,36 @@ const addToList = (body) => (dispatch) => {
         })
 }
 
+const postEvent = (body) => (dispatch) => {
+
+    dispatch({ type: types.POST_EVENT_REQUEST });
+
+    return axios
+    .post('http://localhost:8080/create/addevent', body)
+    .then((res) => {
+        alert(res.data.message);
+        dispatch({ type: types.POST_TO_LIST_SUCCESS });
+    })
+    .catch((error) => {
+        console.log('error: ',error);
+        dispatch({ type: types.POST_TO_LIST_FAILURE });
+    })
+}
+
+const getEvent = (params = {}) => (dispatch) => {
+
+    dispatch({ type: types.GET_EVENT_REQUEST });
+
+    axios
+    .post('http://localhost:8080/create/getevent', params)
+    .then((res) => {
+        dispatch({ type: types.GET_EVENT_SUCCESS, payload: res.data });
+    })
+    .catch((error) => {
+        dispatch({ type: types.GET_EVENT_FAILURE });
+    })
+}
 
 
-export { getList, addToList };
+
+export { getList, addToList, postEvent, getEvent };

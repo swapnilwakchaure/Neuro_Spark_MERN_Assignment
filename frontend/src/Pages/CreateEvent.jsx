@@ -4,17 +4,32 @@ import "../Styles/styles.css";
 import styled from "styled-components";
 import { CgClose } from "react-icons/cg";
 import UserCard from "../Components/UserCard";
-import { addToList, getList } from "../Redux/AddList/action";
+import { addToList, getList, postEvent } from "../Redux/AddList/action";
 import { emailValidation, nameValidation, numberValidation } from "../Components/validation";
 
 
 const CreateEvent = () => {
 
-  // create event form starts from here;
-  // required hooks are created
+  // create event with title and participants array;
 
   const [title, setTitle] = useState('');
   const [selectedUsers, setSelectedUsers] = useState([]);
+
+  // add to list form handling values are here using hooks;
+
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [contact, setContact] = useState('');
+  const [date, setDate] = useState('');
+
+  // get the lists of participants by using react-redux store;
+
+  const { list, isLoading, isError } = useSelector((store) => store.ListReducer);
+  const dispatch = useDispatch();
+
+
+
+  // create event form starts from here;
 
   const handleCheckboxChange = (event, user) => {
     const isChecked = event.target.checked;
@@ -34,7 +49,15 @@ const CreateEvent = () => {
 
     if (title && selectedUsers.length > 0) {
       const payload = { title, selectedUsers };
-      console.log('payload: ', payload);
+      // console.log('payload: ', payload);
+      dispatch(postEvent(payload))
+      .then((
+        dispatch(getList())
+      ))
+
+      setTitle('');
+      setSelectedUsers([]);
+      window.location.reload();
     } else {
       alert('Enter required details or select the participants from the list or add');
     }
@@ -43,18 +66,6 @@ const CreateEvent = () => {
 
 
   // add to list modal form starts from here;
-  // add to list form handling values are here using hooks;
-
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [contact, setContact] = useState('');
-  const [date, setDate] = useState('');
-
-  // get the lists of participants by using react-redux store;
-
-  const { list, isLoading, isError } = useSelector((store) => store.ListReducer);
-  const dispatch = useDispatch();
-
   // using useEffect hook dispatch getList function and get data;
 
   useEffect(() => {
@@ -218,7 +229,7 @@ const CreateEvent = () => {
             <Message>{noStrength !== 'valid' && contact.length > 1 && noStrength}</Message>
           </div>
 
-          <Button>Add To List</Button>
+          <Button type="submit">Add To List</Button>
         </Form>
       </div>
       }
@@ -278,7 +289,7 @@ const ButtonBox = styled.div`
 `
 
 
-const Button = styled.p`
+const Button = styled.button`
   width: 90%;
   margin: 5px;
   padding: 5px;
